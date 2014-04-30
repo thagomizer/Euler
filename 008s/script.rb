@@ -3,17 +3,16 @@
 # Find the greatest product of five consecutive digits in the 1000-digit number.
 
 filename = ARGV[0] || "number.txt"
+number = ""
+File.open(filename, "r") do |f|
+  number = f.read
+end
 
-file = File.open(filename, "r")
-digits = [0, 0, 0, 0, 0]
 max_product = 0
-
-s = file.readline
-nums = s.split ""
-nums.each do |n|
-  digits << n.to_i
-  digits.delete_at 0
-  product = digits.inject(1) {|prod, d| prod * d}
+digits = number.split ""
+digits.map! { |n| n.to_i }
+digits.each_cons(5) do |ary|
+  product = ary.inject(1) { |prod, d| prod * d }
   max_product = product if product > max_product
 end
 
