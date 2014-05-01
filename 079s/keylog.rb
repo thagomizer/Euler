@@ -26,5 +26,3 @@ digraph do
   end
   save "graph", "png"
 end
-
-

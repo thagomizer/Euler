@@ -55,7 +55,7 @@ my_primes.each do |prime|
   break if found_count >  1
 end
 
-# time ruby prime_sequence.rb 
+# time ruby prime_sequence.rb
 # 148748178147
 # 296962999629
 

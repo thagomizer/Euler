@@ -1,27 +1,25 @@
 # The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 
 # Find the sum of all the primes below two million.
-require 'pp'
 
-class Fixnum
-  def prime?
-    root = Math.sqrt(self).to_i
-    (2..root).each do |x|
-      if self % x == 0 then
-        return false
-      end
-    end
-    true
-  end
-end
+# class Fixnum
+#   def prime?
+#     root = Math.sqrt(self).to_i
+#     (2..root).each do |x|
+#       if self % x == 0 then
+#         return false
+#       end
+#     end
+#     true
+#   end
+# end
+require 'prime'
 
-i = 3
-sum = 2
-while i < 2_000_000 do
-  sum += i if i.prime?
-  i += 2
+sum = 0
+Prime.each(2_000_000) do |i|
+  sum += i
 end
-pp sum
+puts sum
 
 # 142913828922
 
