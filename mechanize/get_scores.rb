@@ -24,8 +24,11 @@ usernames.each do |user|
   status = agent.page.search('#progress_bar_section h3').text
   status =~ /Solved (\d*)/
   progress[user] = $1
+  progress[user] = 0 if progress[user].empty?
 end
 
+timestamp = Time.now.iso8601
+
 progress.each do |user, score|
-  puts "#{user} has solved #{score}"
+  puts "#{user}, #{score}, #{timestamp}"
 end
