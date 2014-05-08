@@ -11,7 +11,7 @@
 require 'pp'
 
 class Cell
-  attr_accessor :value, :right, :down
+  attr_accessor :value, :sum
 
   def initialize(value = nil)
     self.value = value;
@@ -21,21 +21,37 @@ end
 dimension = 4
 matrix = []
 
-File.open("small_matrix.txt") do |f|
-  f.each_line do |line|
-    matrix << line.split(",").map { |x| cell = Cell.new(x.to_i) }
+File.open("matrix.txt") do |f|
+  f.each_line.with_index do |line, row|
+    matrix[row] = line.split(",").map { |x| cell = Cell.new(x.to_i) }
   end
 end
 
-matrix.each_with_index do |row, row_index|
-  row.each_with_index do |cell, col_index|
-    if col_index < dimension then
-      cell.right = matrix[row_index][col_index + 1]
+dim = matrix[0].length - 1
+
+0.upto(dim) do |row|
+  0.upto(dim) do |col|
+    sum = matrix[row][col].value
+
+    neighbors = []
+    if row > 0
+      neighbors << matrix[row - 1][col].sum
     end
-    if row_index < dimension then
-      cell.down = matrix[row_index + 1][col_index]
+
+    if col > 0
+      neighbors << matrix[row][col - 1].sum
     end
+
+    sum += neighbors.min.to_i
+
+    matrix[row][col].sum = sum
   end
 end
 
-matrix.flatten!
+pp matrix[dim][dim].sum
+
+# 427337
+
+# real	0m0.126s
+# user	0m0.075s
+# sys	0m0.050s
