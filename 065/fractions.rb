@@ -29,3 +29,32 @@
 
 # Find the sum of digits in the numerator of the 100th convergent of the
 # continued fraction for e.
+
+
+### For e
+## 0) 2
+## 1) 2 + 1/(1 + 0) = 3
+## 2) 2 + 1/(1 + 1/2) = 2 + 1/(3/2) = 2 + 2/3 = 8/3
+## 3) 2 + 1/(1 + 1/(2 + 1/1)) = 2 + 1/(1 + 1/3) = 2 + 1/(4/3) = 2 + 3/4 = 11/4
+
+def partial_products max, count
+  case
+  when max == count
+    return Rational(0, 1)
+  when count % 3 == 1
+    f = (count / 3 + 1) * 2
+    return Rational(1, f + partial_products(max, count + 1))
+  else
+    return Rational(1, 1 + partial_products(max, count + 1))
+  end
+end
+
+approx = 2 + partial_products(99,0)
+p approx.numerator.to_s.split('').map(&:to_i).inject(:+)
+
+# time ruby fractions.rb
+# 272
+
+# real	0m0.114s
+# user	0m0.061s
+# sys	0m0.052s
