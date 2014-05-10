@@ -22,46 +22,47 @@
 
 # Find the value of n <= 1,000,000 for which n/φ(n) is a maximum.
 
-require 'rational'
 require 'pp'
 
 class Integer
-  def totient(threshold=5000)
+  # require 'prime'
+
+  # @@prime = Prime.instance
+
+  def totient(threshold = 50000)
     sum = 1
+    # return (self - 1) if @@prime.prime?(self)
+
     2.upto(self - 1) do |k|
       if k.gcd(self) == 1
         sum +=1
       end
-      return false if sum >= threshold
+      # return false if sum >= threshold
     end
-    sum
+    sum.to_f
   end
 end
 
 end_point = ARGV[0].to_i
-max_n_tn = 2
-max_n    = 2
+max_totient = 1
+max_n       = 2
+max_ratio   = 2
+
+results = []
 
 # faster
-(90..end_point).step(3) do |n|
-  threshold = n.to_f/max_n_tn
-  t = n.totient(threshold)
-  if t then
-    max_n_tn = n.to_f/t
+(2..end_point).each do |n|
+  totient = n.totient
+
+  next unless totient
+
+  ratio = n/n.totient
+
+  if ratio > max_ratio
     max_n = n
+    max_ratio = ratio
+    max_totient = totient
   end
 end
 
-pp [max_n, max_n_tn]
-
-# # find real
-# (2..end_point).each do |n|
-#   t = n.to_f/n.totient
-#   if t > max_n_tn then
-#     max_n_tn = t
-#     max_n = n
-#   end
-# end
-
-# pp [max_n, max_n_tn]
-
+pp [max_n, max_ratio, max_totient]
