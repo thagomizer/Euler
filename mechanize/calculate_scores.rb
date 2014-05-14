@@ -2,49 +2,49 @@ require 'pp'
 require 'date'
 
 class Record
-  attr_accessor :user, :count, :timestamp, :score
+  attr_accessor :count, :timestamp
 
-  def initialize(user, count, timestamp)
-    @user = user
+  def initialize(count, timestamp)
     @count = count.to_i
     @timestamp = DateTime.rfc3339(timestamp)
-    @score = 0
   end
 end
 
-records = []
+class User
+  attr_accessor :username, :initial_count, :records, :score
+
+  def initialize(username)
+    @user = username
+    @records = []
+    @score = 0
+  end
+
+  def add_record(count, timestamp)
+    @records << Record.new(count, timestamp)
+
+    if records.length == 1
+      @initial_count = count.to_i
+    end
+
+    @score = count.to_i - @initial_count
+  end
+end
+
+users = Hash.new { |h, k| h[k] = User.new(k) }
 
 File.open("records.csv", "r") do |file|
   file.each_line do |line|
-    r = Record.new(*line.split(",").map(&:strip))
-    records << r
+    username, count, timestamp = line.split(",").map(&:strip)
+
+    users[username].add_record(count, timestamp)
   end
 end
 
-## normalize the scores
-starting_values = {}
+## Calculate and print scores
 
-records.each do |r|
-  if starting_values[r.user]
-    r.score = r.count - starting_values[r.user]
-  else
-    starting_values[r.user] = r.count
-  end
-end
+scores = users.map { |username, u| [username, u.score] }
+scores = scores.sort_by { |u, score| score }.reverse
 
-latest = {}
-
-records.each do |r|
-  unless latest[r.user]
-    latest[r.user] = r
-    next
-  end
-
-  if latest[r.user].timestamp < r.timestamp
-    latest[r.user] = r
-  end
-end
-
-latest.sort_by { |user, r| r.score }.each do |user, r|
-  puts "#{user} - #{r.score}"
+scores.each do |u, s|
+  puts "#{u} - #{s}"
 end
