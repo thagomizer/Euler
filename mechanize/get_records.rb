@@ -29,6 +29,9 @@ end
 
 timestamp = Time.now.iso8601
 
-progress.each do |user, score|
-  puts "#{user}, #{score}, #{timestamp}"
+File.open("records.csv", "a") do |file|
+  file.puts
+  progress.each do |user, score|
+    file.puts "#{user}, #{score}, #{timestamp}"
+  end
 end
