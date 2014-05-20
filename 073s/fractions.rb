@@ -11,3 +11,33 @@
 
 # How many fractions lie between 1/3 and 1/2 in the sorted set of
 # reduced proper fractions for d <= 12,000?
+
+require 'rational'
+require 'pp'
+
+low = Rational(1, 3)
+high = Rational(1, 2)
+
+input = ARGV[0].to_i
+
+fracts = 0
+
+input.downto(1).each do |d|
+  n = (low * d).ceil
+
+  loop do
+    temp = Rational(n, d)
+    break if temp > high
+    fracts += 1 if temp.denominator == d
+    n += 1
+  end
+end
+
+puts fracts - 2  # 1/2 and 1/3 are in the count so remove them
+
+# bash-3.2$ time ruby fractions.rb 12000
+# 7295372
+
+# real	0m10.822s
+# user	0m10.766s
+# sys	0m0.055s
