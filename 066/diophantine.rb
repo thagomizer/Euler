@@ -21,31 +21,41 @@
 # Find the value of D <= 1000 in minimal solutions of x for which the
 # largest value of x is obtained.
 
-$squares = Hash.new(false)
+$square_cache = Hash.new(false)
+$squares = []
+
+n = ARGV[0].to_i
 
 class Fixnum
   def square?
-    $squares[self]
+    $square_cache[self]
   end
 end
 
-(1..10_000_000).each do |x|
-  $squares[x**2] = true
+(1..5_000_000).each do |x|
+  t = x**2
+  $square_cache[t] = x**2
 end
 
 def find_minimal(d)
-  $squares.each_key do |s|
-    val = d * s + 1
-    if $squares[val]
+  s = 1
+  while true do
+    val = d * s**2 + 1
+    if $square_cache[val]
       return Math.sqrt(val)
     end
+
+    if s > 1_000
+      return 0.0
+    else
+      s += 1
+    end
   end
-  return 0.0
 end
 
 max = 0
 
-2.upto(1000) do |n|
+2.upto(n) do |n|
   next if n.square?
 
   x = find_minimal(n)
