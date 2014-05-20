@@ -24,3 +24,55 @@
 
 # How many chains, with a starting number below one million, contain
 # exactly sixty non-repeating terms?
+
+$factorials = {
+  0 => 1,
+  1 => 1,
+  2 => 2,
+  3 => 6,
+  4 => 24,
+  5 => 120,
+  6 => 720,
+  7 => 5040,
+  8 => 40320,
+  9 => 362880
+}
+
+$chains = {}
+
+def chain_length(n)
+  start = n
+  seen = {}
+
+  while !seen[n]
+    if $chains[n]
+      $chains[start] = seen.keys + $chains[n]
+      return $chains[start]
+    end
+
+    seen[n] = true
+    digits = n.to_s.split('').map &:to_i
+
+    sum = digits.map { |n| $factorials[n] }.inject(:+)
+
+    n = sum
+  end
+
+  $chains[start] = seen.keys
+end
+
+count = 0
+
+(100..1_000_000).each do |n|
+  l = chain_length(n).length
+  count += 1 if l == 60
+end
+
+puts count
+
+# time ruby factorial.rb 
+# 402
+
+# real	0m51.433s
+# user	0m51.116s
+# sys	0m0.309s
