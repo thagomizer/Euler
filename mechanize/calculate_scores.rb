@@ -45,6 +45,8 @@ end
 scores = users.map { |username, u| [username, u.score] }
 scores = scores.sort_by { |u, score| score }.reverse
 
-scores.each do |u, s|
-  puts "#{u} - #{s}"
+File.open("scores.csv", "w") do |f|
+  scores.each do |u, s|
+    f.puts "#{u}, #{s}"
+  end
 end
