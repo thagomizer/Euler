@@ -14,7 +14,30 @@
 # that the box would contain.
 require 'pp'
 
-# b = count of blue disks
-# r = count of red disks
-# (b/(b + r)) * ((b - 1)/(b + r - 1))
+## Algebra
 
+##   1       b       b - 1
+## ----- = ----- * ---------
+##   2       n       n - 1
+
+## 2b^2 - 2b = n^2 - n
+
+## Factor via quadratic equation
+
+## b = 0.5 * (1 + Math.sqrt(2 * n**2 - 2 * n + 1))
+## b = 0.5 * (1 - Math.sqrt(2 * n**2 - 2 * n + 1))
+
+
+n = 10e12
+loop do
+  b = 0.5 * (1 + Math.sqrt(2 * n**2 - 2 * n + 1))
+
+  if b.to_i == b
+    pp "b #{b.to_i} n #{n.to_i}"
+    prob = Rational(b, n) * Rational(b - 1, n - 1)
+    pp prob.to_f
+    exit
+  end
+
+  n += 1
+end
