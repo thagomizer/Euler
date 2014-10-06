@@ -61,21 +61,21 @@ class Fixnum
   end
 end
 
-min = {:phi_n => 1000, :n => 0}
+min = {:phi_n => 100_000, :n => 0}
 
 2.upto(107) do |n|
   phi = n.totient
   next unless phi.to_i.permutation?(n)
-  if min[:phi_n] > n/phi
-    min[:phi_n] = n
+  if min[:phi_n] > (n/phi)
+    min[:phi_n] = n/phi
     min[:n] = n
   end
 end
 
 pp min
 
-# {:phi_n=>63, :n=>63}
+{:phi_n=>1.75, :n=>21}
 
-# real	0m0.124s
-# user	0m0.072s
-# sys	0m0.050s
+real	0m0.122s
+user	0m0.072s
+sys	0m0.049s
