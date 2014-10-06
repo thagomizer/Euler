@@ -35,8 +35,7 @@ class Fixnum
                         end
                       else
                         m, n = simple_factors
-                        d = m.gcd(n)
-                        (m.totient * n.totient * d/d.totient).to_f
+                        (m.totient * n.totient).to_f
                       end
   end
 
@@ -74,3 +73,11 @@ end
 
 pp min_ratio
 pp min_n
+
+# time ruby totient.rb
+# 1.0007090511248113
+# 8319823
+
+# real	0m50.538s
+# user	0m50.403s
+# sys	0m0.110s
