@@ -31,43 +31,39 @@ require 'pp'
 require 'prime'
 
 class Fixnum
-  $totients = {2 => 1.to_f}
-  $factorizations = {1 => [1], 2 => [2]}
+  $totients = {1 => 1.to_f, 2 => 1.to_f}
+  $factors = {1 => [1, 1], 2 => [2, 1]}
 
   def totient
     return $totients[self] if $totients[self]
 
-    t = 0
-    case
-    when Prime.prime?(self)
-      t = self -1
-    when self.even?
-      m = self / 2
-      if m.even?
-        t = m.totient  * 2
-      else
-        t = m.totient
-      end
-    else
-      factors = self.prime_factorization.uniq
-      t = factors.inject(self) { |p, n| p *= (1 - (1.0/n)) }.to_i
-    end
-
-    $totients[self] = t.to_f
+    $totients[self] = case
+                      when Prime.prime?(self)
+                        t = self - 1
+                      when self.even?
+                        m = self / 2
+                        if m.even?
+                          t = m.totient  * 2
+                        else
+                          t = m.totient
+                        end
+                      else
+                        m, n = simple_factors
+                        d = m.gcd(n)
+                        (m.totient * n.totient * d/d.totient).to_f
+                      end
   end
 
-  def prime_factorization
-    return [self] if Prime.prime?(self)
-    return $factorizations[self] if $factorizations[self]
-
-    root = Math.sqrt(self).floor
-    root.downto(1) do |x|
-      if self % x == 0 then
-        f = x.prime_factorization + (self / x).prime_factorization
-        $factorizations[self] = f
-        return f
-      end
-    end
+  def simple_factors
+    $factors[self] ||= if Prime.prime?(self)
+                         [self, 1]
+                       else
+                         root = Math.sqrt(self).floor
+                         root.downto(1) do |x|
+                           next unless self % x == 0
+                           break [x, self / x]
+                         end
+                       end
   end
 end
 
@@ -88,10 +84,11 @@ puts max_t_n
 puts max_n
 puts max_t
 
+# time ruby totient.rb
 # 5.539388020833333
 # 510510
 # 92160.0
 
-# real	0m11.145s
-# user	0m11.063s
-# sys	0m0.078s
+# real	0m7.843s
+# user	0m7.771s
+# sys	0m0.068s
