@@ -17,33 +17,6 @@ require 'pp'
 require 'prime'
 
 class Fixnum
-  $totients = {1 => 1.to_f, 2 => 1.to_f}
-  $factors = {1 => [1, 1], 2 => [2, 1]}
-
-  def totient
-    return $totients[self] if $totients[self]
-
-    $totients[self] = case
-                      when Prime.prime?(self)
-                        t = self - 1
-                      when self.even?
-                        m = self / 2
-                        if m.even?
-                          t = m.totient  * 2
-                        else
-                          t = m.totient
-                        end
-                      else
-                        m, n = simple_factors
-                        (m.totient * n.totient).to_f
-                      end
-  end
-
-  def simple_factors
-    n = Prime.prime_division(self)[-1][0]
-    $factors[self] ||= [n, self/n]
-  end
-
   def permutation?(n)
     self.to_s.split('').sort == n.to_s.split('').sort
   end
@@ -60,9 +33,8 @@ min_n = 0
 
 primes.permutation(2).each do |a, b|
   n = a * b
-  next if n < 5_000_000
   next if n > 10**7
-  phi = n.totient
+  phi = (a - 1.0) * (b - 1)
   ratio = (n/phi)
   next unless min_ratio > ratio
   if phi.to_i.permutation?(n)
@@ -71,6 +43,7 @@ primes.permutation(2).each do |a, b|
   end
 end
 
+
 pp min_ratio
 pp min_n
 
@@ -78,6 +51,6 @@ pp min_n
 # 1.0007090511248113
 # 8319823
 
-# real	0m50.538s
-# user	0m50.403s
-# sys	0m0.110s
+# real	0m0.615s
+# user	0m0.558s
+# sys	0m0.054s
