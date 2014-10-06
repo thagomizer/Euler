@@ -36,6 +36,8 @@ File.open("records.csv", "r") do |file|
   file.each_line do |line|
     username, count, timestamp = line.split(",").map(&:strip)
 
+    next unless [username, count, timestamp].all?
+
     users[username].add_record(count, timestamp)
   end
 end

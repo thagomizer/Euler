@@ -1,25 +1,28 @@
 require 'mechanize'
 require 'yaml'
 
-config = YAML.load_file('secrets.yml')
+config = YAML.load_file('/Users/aja/Projects/Euler/mechanize/secrets.yml')
+
+participants = []
+File.open("/Users/aja/projects/Euler/mechanize/participants.csv", "r") do |file|
+  file.each_line do |line|
+    participants << line.chomp
+  end
+end
 
 agent = Mechanize.new
 
-login_pg = agent.get("https://projecteuler.net/login")
+login_pg = agent.get("https://projecteuler.net/sign_in")
 
-login_pg.form_with(:name => "login_form") do |f|
+login_pg.form_with(:name => "sign_in_form") do |f|
   f.username = config['username']
   f.password = config['password']
-  f['login'] = "Login"            #STUPID STUPID STUPID
+  f['sign_in'] = "Sign In"            #STUPID STUPID STUPID
 end.submit
-
-friends_pg = agent.get("https://projecteuler.net/friends")
-
-usernames = friends_pg.links_with(:href => /progress=/).map { |l| l.text }
 
 progress = {}
 
-usernames.each do |user|
+participants.each do |user|
   agent.get("https://projecteuler.net/progress=#{user}")
   status = agent.page.search('#progress_bar_section h3').text
   status =~ /Solved (\d*)/
@@ -29,7 +32,7 @@ end
 
 timestamp = Time.now.iso8601
 
-File.open("records.csv", "a") do |file|
+File.open("/Users/aja/Projects/Euler/mechanize/records.csv", "a") do |file|
   file.puts
   progress.each do |user, score|
     file.puts "#{user}, #{score}, #{timestamp}"
