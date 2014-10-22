@@ -1,5 +1,6 @@
 require 'pp'
 require 'date'
+require 'csv'
 
 class Record
   attr_accessor :count, :timestamp
@@ -11,10 +12,10 @@ class Record
 end
 
 class User
-  attr_accessor :username, :initial_count, :records, :score
+  attr_accessor :username, :initial_count, :records, :score, :division
 
   def initialize(username)
-    @user = username
+    @username = username
     @records = []
     @score = 0
   end
@@ -28,6 +29,15 @@ class User
 
     @score = count.to_i - @initial_count
   end
+
+  def to_s
+    "***#{self.username}***"
+  end
+
+  def inspect
+    "---#{self.username}---"
+  end
+
 end
 
 users = Hash.new { |h, k| h[k] = User.new(k) }
@@ -42,13 +52,27 @@ File.open("records.csv", "r") do |file|
   end
 end
 
+CSV.foreach("/Users/aja/projects/Euler/mechanize/sign_ups.csv") do |row|
+  next if row[0] == "Timestamp"
+
+  users[row[1]].division = row[4]
+end
+
 ## Calculate and print scores
 
-scores = users.map { |username, u| [username, u.score] }
-scores = scores.sort_by { |u, score| score }.reverse
+users_by_div = users.values.group_by { |u| u.division }
+scores_by_div = Hash[users_by_div.map { |div, ary| [div, ary.sort_by { |u| u.score }.reverse]}]
+
 
 File.open("scores.csv", "w") do |f|
-  scores.each do |u, s|
-    f.puts "#{u}, #{s}"
+  scores_by_div.each do |div, users|
+    f.puts div
+    f.puts "---------"
+    users.each do |u|
+      f.puts "#{u.username} #{u.score}"
+    end
+
+    f.puts
+    f.puts
   end
 end
