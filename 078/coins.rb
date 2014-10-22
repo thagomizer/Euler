@@ -11,46 +11,43 @@
 # O   O   O   O   O
 # Find the least value of n for which p(n) is divisible by one million.
 
-require 'pp'
-
-$summation_cache = Hash.new { |h, k| h[k] = [0, 1] }
-
-def summations(n, max)
-  return (n / 2) + 1 if max == 2
-  return (n + 3)**2 / 12 if max == 3
-
-  if $summation_cache[n][max]
-    return $summation_cache[n][max]
+class HashHash < Hash
+  def initialize
+    super { |h,k| h[k] = HashHash.new }
   end
-
-  t = case
-  when max == 0
-    0
-  when n < max
-    summations(n, max - 1)
-  when n == max
-    1 + summations(n, max - 1)
-  else
-    summations(n, max - 1) +
-      summations(n - max, max)
-  end
-
-  $summation_cache[n][max] = t
-
-  t
 end
 
-n = ARGV[0].to_i
+$coin_piles = {0 => 1, 1 => 1}
 
-1.upto(n) do |x|
-  s = summations(n, n)
-  if s % 1_000_000 == 0
-    p "Number of coins #{n}"
-    p "Piles #{s}"
+# How many different coin piles can be made with n coins
+def coin_piles(total)
+end
+
+
+def coin_piles_helper(total, groups)
+  return 1 if groups == 1
+  return 1 if total == groups
+
+
+end
+
+
+require 'minitest/autorun'
+
+class TestCoinPiles < Minitest::Test
+  def test_coin_piles_one
+    assert_equal 1, coin_piles(1)
   end
 
-  if x == n
-    p "Number of coins #{n}"
-    p "Piles #{s}"
+  def test_coin_piles_two
+    assert_equal 2, coin_piles(2)
+  end
+
+  def test_coin_piles_three
+    assert_equal 3, coin_piles(3)
+  end
+
+  def test_coin_piles_four
+    assert_equal 5, coin_piles(4)
   end
 end

@@ -21,46 +21,80 @@
 # Find the value of D <= 1000 in minimal solutions of x for which the
 # largest value of x is obtained.
 
-$square_cache = Hash.new(false)
-$squares = []
-
-n = ARGV[0].to_i
+require 'pp'
 
 class Fixnum
   def square?
-    $square_cache[self]
+    Math.sqrt(self)**2 == self
   end
 end
 
-(1..5_000_000).each do |x|
-  t = x**2
-  $square_cache[t] = x**2
+def find_minimal(d, max_x = 1_000_000)
+  (2..max_x).each do |x|
+    y = Math.sqrt((1 - x**2) / (-1 * d))
+    if y % 1 == 0
+      return [x, y.to_i]
+    end
+  end
+  return [nil, nil]
 end
 
-def find_minimal(d)
-  s = 1
-  while true do
-    val = d * s**2 + 1
-    if $square_cache[val]
-      return Math.sqrt(val)
-    end
+# pp find_minimal(61.to_f, 1_000_000_000)
 
-    if s > 1_000
-      return 0.0
-    else
-      s += 1
-    end
+result = {:x => 1, :d => 1}
+
+(2..400).each do |d|
+  next if d.square?
+  x, y = find_minimal(d.to_f)
+
+  if !x
+    puts d
+    next
+  end
+
+  if x > result[:x]
+    result[:x] = x
+    result[:d] = d
+    pp result
   end
 end
 
-max = 0
+pp result
 
-2.upto(n) do |n|
-  next if n.square?
+# $square_cache = Hash.new(false)
+# $squares = []
 
-  x = find_minimal(n)
-  max = x if x > max
-  puts "ERROR #{n}" if x == 0.0
-end
+# n = ARGV[0].to_i
 
-puts max
+# (1..5_000_000).each do |x|
+#   t = x**2
+#   $square_cache[t] = x**2
+# end
+
+# def find_minimal(d)
+#   s = 1
+#   while true do
+#     val = d * s**2 + 1
+#     if $square_cache[val]
+#       return Math.sqrt(val)
+#     end
+
+#     if s > 1_000
+#       return 0.0
+#     else
+#       s += 1
+#     end
+#   end
+# end
+
+# max = 0
+
+# 2.upto(n) do |n|
+#   next if n.square?
+
+#   x = find_minimal(n)
+#   max = x if x > max
+#   puts "ERROR #{n}" if x == 0.0
+# end
+
+# puts max

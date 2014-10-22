@@ -14,30 +14,20 @@
 # that the box would contain.
 require 'pp'
 
-## Algebra
-
-##   1       b       b - 1
-## ----- = ----- * ---------
-##   2       n       n - 1
-
-## 2b^2 - 2b = n^2 - n
-
-## Factor via quadratic equation
-
-## b = 0.5 * (1 + Math.sqrt(2 * n**2 - 2 * n + 1))
-## b = 0.5 * (1 - Math.sqrt(2 * n**2 - 2 * n + 1))
-
-
-n = 10e12
+s = 10e12 + 2
+max = s + 10e6
+n = s
+target = Rational(1, 2)
 loop do
-  b = 0.5 * (1 + Math.sqrt(2 * n**2 - 2 * n + 1))
+  b = (n * 1/Math.sqrt(2)).ceil
 
-  if b.to_i == b
+  prob = Rational(b**2 - b, n**2 - n)
+
+  if prob == target
     pp "b #{b.to_i} n #{n.to_i}"
-    prob = Rational(b, n) * Rational(b - 1, n - 1)
-    pp prob.to_f
-    exit
+#    exit
   end
 
-  n += 1
+  n += 3
+  exit if n > max
 end
