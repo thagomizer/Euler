@@ -15,37 +15,68 @@ require 'pp'
 # How many elements would be contained in the set of reduced proper
 # fractions for d <= 1,000,000?
 
+# My bad solution
+# 
+# require 'prime'
+
+# class Fixnum
+#   $factors = {}
+
+#   def µ
+#     if self.square_free?
+#       self.factors.length.even? ? 1 : -1
+#     else
+#       0
+#     end
+#   end
+
+#   def square_free?
+#     self.factors.none? { |_, pow| pow > 1 }
+#   end
+
+#   def factors
+#     $factors[self] ||= Prime.prime_division(self)
+#   end
+# end
+
+# def count_fractions n
+#   (1..n).inject(0) { |sum, k| sum + (k.µ * (n/k)**2) } / 2
+# end
+
+# puts count_fractions(1_000_000)
+
+# # NOT FAST ENOUGH...GRRR
+# # 303963552391
+
+# # real	1m24.769s
+# # user	1m24.196s
+# # sys	0m0.496s
+
+
+## STOLEN FROM SOMEONES PYTHON SOLUTION
+
 require 'prime'
 
-class Fixnum
-  $factors = {}
+limit = 1_000_000
+primes = []
+Prime.each do |p|
+  break if p > limit
+  primes << p
+end
 
-  def µ
-    if self.square_free?
-      self.factors.length.even? ? 1 : -1
-    else
-      0
-    end
-  end
+phi = []
 
-  def square_free?
-    self.factors.none? { |_, pow| pow > 1 }
-  end
+limit.downto(1).each do |d|
+  phi[d] = d
+end
 
-  def factors
-    $factors[self] ||= Prime.prime_division(self)
+primes.each do |prime|
+  d = prime
+  while d <= limit do
+    phi[d] *= (prime - 1).to_f / prime
+    d += prime
   end
 end
 
-def count_fractions n
-  (1..n).inject(0) { |sum, k| sum + (k.µ * (n/k)**2) } / 2
-end
+puts phi.compact.inject(:+) - 1
 
-puts count_fractions(1_000_000)
-
-# NOT FAST ENOUGH...GRRR
-# 303963552391
-
-# real	1m24.769s
-# user	1m24.196s
-# sys	0m0.496s
