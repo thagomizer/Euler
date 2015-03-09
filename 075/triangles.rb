@@ -26,35 +26,44 @@ require 'pp'
 ## Either all even, or 2 even and 1 odd
 ##
 
-# MAX = 750_000
-MAX = 5_000
+MAX = 1_500_000
 
-#triples = Hash.new { |h, k| h[k] = [] }
+search_max = Math.sqrt(MAX)
+
 triple_count = Hash.new(0)
 ab = {}
 
 k = 1
 triple = []
+a, b, c = 0
 
-(2..MAX).each do |m|
+(2..search_max).each do |m|
   (1...m).each do |n|
     a = m**2 - n**2
     b = 2 * m * n
-    a,b = [a,b].sort
-    next if ab[[a,b]]
-
+    if a > b
+      a, b = b, a
+    end
+    next if ab["#{a},#{b}"]
     c = m**2 + n**2
     sum = a + b + c
- #   triple = [a, b, c]
     k = 1
-    while (t_sum = sum * k) < MAX do
-      ab[[a*k,b*k]] = true
-#      triples[sum * k] << (triple.map { |n| n * k })
+    while (t_sum = sum * k) <= MAX do
+      break if ab["#{a*k},#{b*k}"]
+      ab["#{a*k},#{b*k}"] = true
       triple_count[t_sum] += 1
       k += 1
     end
   end
 end
 
-# pp triples[120]
-pp triple_count[120]
+pp triple_count.select { |k, v| v == 1 }.length
+
+# time time ruby triangles.rb 
+# time time ruby triangles.rb 
+# 161667
+#         9.78 real         9.46 user         0.30 sys
+
+# real	0m9.787s
+# user	0m9.462s
+# sys	0m0.303s
